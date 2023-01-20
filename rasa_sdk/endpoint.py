@@ -92,17 +92,20 @@ def create_app(
     @app.post("/webhook")
     async def webhook(request: Request) -> HTTPResponse:
         """Webhook to retrieve action calls."""
-        if request.headers.get("Content-Encoding") == "deflate":
-            # Decompress the request data using zlib
-            decompressed_data = zlib.decompress(request.body)
-            # Load the JSON data from the decompressed request data
-            action_call = json.loads(decompressed_data)
-        else:
-            action_call = request.json
+        try:
+            if request.headers.get("Content-Encoding") == "deflate":
+                # Decompress the request data using zlib
+                decompressed_data = zlib.decompress(request.body)
+                # Load the JSON data from the decompressed request data
+                action_call = json.loads(decompressed_data)
+            else:
+                action_call = request.json
+        except Exception as e:
+            logger.debug(e)
+        logger.debug(action_call)
         if action_call is None:
-            body = {"error": "Invalid body request"}
-            return response.json(body, status=400)
-
+                body = {"error": "Invalid body request"}
+                return response.json(body, status=400)
         utils.check_version_compatibility(action_call.get("version"))
 
         if auto_reload:

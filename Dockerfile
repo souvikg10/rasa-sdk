@@ -26,10 +26,10 @@ RUN apt-get update -qq \
 
 # install poetry
 # keep this in sync with the version in pyproject.toml and Dockerfile
-ENV POETRY_VERSION 1.1.4
+ENV POETRY_VERSION 1.2.2
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
-ENV PATH "/root/.poetry/bin:/opt/venv/bin:${PATH}"
+RUN curl -sSL https://install.python-poetry.org | python
+ENV PATH "/root/.local/bin:/opt/venv/bin:${PATH}"
 
 # install dependencies
 COPY . /app/
@@ -85,4 +85,4 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 WORKDIR /app
 EXPOSE 5055
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["start", "--actions", "actions"]
+CMD ["start", "--actions", "actions", "--debug"]
