@@ -93,12 +93,19 @@ def create_app(
     async def webhook(request: Request) -> HTTPResponse:
         """Webhook to retrieve action calls."""
         try:
+            logger.debug(request.headers)
+            logger.debug(request.body)
             if request.headers.get("Content-Encoding") == "deflate":
                 # Decompress the request data using zlib
+                logger.debug(request.headers)
+                logger.debug(request.body)
                 decompressed_data = zlib.decompress(request.body)
+                logger.debug(decompressed_data)
                 # Load the JSON data from the decompressed request data
                 action_call = json.loads(decompressed_data)
             else:
+                logger.debug(request.headers)
+                logger.debug(request.body)
                 action_call = request.json
         except Exception as e:
             logger.debug(e)
